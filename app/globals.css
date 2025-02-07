@@ -3,24 +3,42 @@
 @tailwind utilities;
 
 :root {
-  --background: #f8fafc;
+  --background: #f0f2f5;
   --foreground: #0f172a;
+  --primary: #3b82f6;
+  --primary-darker: #2563eb;
+  --secondary: #4ade80;
+  --secondary-darker: #22c55e;
+  --gray-lighter: #f8fafc;
+  --gray-darker: #6b7280;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0f172a;
     --foreground: #f8fafc;
+    --primary: #60a5fa;
+    --primary-darker: #3b82f6;
+    --secondary: #86efac;
+    --secondary-darker: #4ade80;
+    --gray-lighter: #4b5563;
+    --gray-darker: #d1d5db;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Geist Sans', sans-serif;
+  @apply text-base antialiased;
 }
 
 ::selection {
-  background-color: #3b82f6;
+  background-color: var(--primary);
   color: white;
+}
+
+/* Add specific styling for the generate button */
+.generate-pdf-button {
+  @apply bg-primary text-white px-4 py-2 rounded hover:bg-primary-darker transition-colors;
 }

@@ -25,14 +25,14 @@ interface DocInputProps {
   
   
     return (
-      <div className="w-full max-w-2xl mx-auto space-y-4">
-        <div className="space-y-2">
+      <div className="w-full max-w-2xl mx-auto space-y-6 md:space-y-8">
+        <div className="space-y-3">
           {docLinks.map((link, index) => (
-            <div key={index} className="flex items-center space-x-2">
+            <div key={index} className="flex items-center space-x-3">
               <input
                 type="text"
                 placeholder="https://docs.google.com/document/d/your-doc-id"
-                className="w-full p-2 text-sm border rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                className="w-full p-3 text-sm border border-gray-300 rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition duration-200 ease-in-out"
                 value={link}
                 onChange={(e) => handleInputChange(index, e.target.value)}
               />
@@ -49,11 +49,11 @@ interface DocInputProps {
         </div>
   
   
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
           <button
             onClick={onGenerate}
             disabled={isGenerating}
-            className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 ease-in-out flex items-center justify-center gap-2"
+            className="generate-pdf-button w-full sm:w-[calc(50%-0.5rem)] px-6 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 ease-in-out flex items-center justify-center gap-2 text-base"
           >
             {isGenerating ? (
               <>
@@ -72,7 +72,7 @@ interface DocInputProps {
             <a
               href={downloadUrl}
               download="merged-documents.pdf"
-              className="w-full sm:w-auto px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200 ease-in-out flex items-center justify-center gap-2"
+              className="w-full sm:w-[calc(50%-0.5rem)] px-6 py-2.5 bg-secondary hover:bg-secondary-darker text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50 transition duration-200 ease-in-out flex items-center justify-center gap-2 text-base"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
               Download PDF
