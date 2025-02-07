@@ -54,7 +54,7 @@ interface DocInputProps {
   
   
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
-          <div className="flex gap-2 w-full sm:w-[calc(50%-0.5rem)]">
+          <div className="flex gap-2 w-full">
             <button
               onClick={() => onGenerate('pdf')}
               disabled={isGenerating}
@@ -90,38 +90,39 @@ interface DocInputProps {
               )}
             </button>
           </div>
-  
-          {downloadUrl ? (
+        </div>
+
+        {downloadUrl ? (
+          <div className="flex gap-4 items-center w-full">
+            <div className="flex-grow">
+              <input
+                type="text"
+                placeholder="Enter filename (optional)"
+                className="w-full p-3 text-sm border border-gray-300 rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition duration-200 ease-in-out"
+                value={filename}
+                onChange={(e) => onFilenameChange(e.target.value)}
+              />
+            </div>
             <a
               href={downloadUrl}
               download={filename ? `${filename}.${downloadFormat}` : `merged-documents.${downloadFormat}`}
-              className="w-full sm:w-[calc(50%-0.5rem)] px-6 py-2.5 bg-secondary hover:bg-secondary-darker text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50 transition duration-200 ease-in-out flex items-center justify-center gap-2 text-base"
+              className="px-6 py-2.5 bg-secondary hover:bg-secondary-darker text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50 transition duration-200 ease-in-out flex items-center justify-center gap-2 text-base whitespace-nowrap"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
               Download {downloadFormat?.toUpperCase()}
             </a>
-          ) : (
+          </div>
+        ) : (
+          <div className="flex justify-center w-full">
             <button
               onClick={onClear}
-              className="w-full sm:w-[calc(50%-0.5rem)] px-6 py-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 focus:ring-opacity-50 transition duration-200 ease-in-out flex items-center justify-center gap-2 text-base"
+              className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 focus:ring-opacity-50 transition duration-200 ease-in-out flex items-center justify-center gap-2 text-base"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
               Clear All
             </button>
-          )}
-        </div>
-        
-        {downloadUrl && (
-          <div className="w-full">
-            <input
-              type="text"
-              placeholder="Enter filename (optional)"
-              className="w-full p-3 text-sm border border-gray-300 rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition duration-200 ease-in-out"
-              value={filename}
-              onChange={(e) => onFilenameChange(e.target.value)}
-            />
           </div>
         )}
       </div>
