@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import epub from 'epub-gen-memory';
 import type { Chapter } from 'epub-gen-memory';
 
-async function fetchGoogleDoc(docId: string): Promise<string | null> {
+async function fetchGoogleDoc(docId: string): Promise<{ content: string; filename: string } | null> {
   const baseUrl = "https://docs.google.com/document/d/";
   const exportUrl = `/export?format=html`;
   const url = `${baseUrl}${docId}${exportUrl}`;
@@ -14,7 +14,30 @@ async function fetchGoogleDoc(docId: string): Promise<string | null> {
       console.error(`Failed to download HTML for docId: ${docId}, status: ${response.status}`);
       return null;
     }
-    return await response.text();
+    
+    // Get filename from Content-Disposition header
+    const contentDisposition = response.headers.get('content-disposition');
+    let filename = 'Document';
+    if (contentDisposition) {
+      // First try to get the UTF-8 encoded filename
+      const utf8FilenameMatch = contentDisposition.match(/filename\*=UTF-8''([^;]*)/);
+      if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+        filename = decodeURIComponent(utf8FilenameMatch[1]);
+      } else {
+        // Fall back to regular filename if UTF-8 version is not available
+        const filenameMatch = contentDisposition.match(/filename="([^"]*)"/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      // Remove file extension if present and clean up the filename
+      filename = filename
+        .replace(/\.html$/, '')
+        .replace(/\.htm$/, '');
+    }
+
+    const content = await response.text();
+    return { content, filename };
   } catch (error) {
     console.error(`Error downloading HTML for docId: ${docId}`, error);
     return null;
@@ -29,16 +52,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No document IDs provided" }, { status: 400 });
     }
 
-    const htmlContents = await Promise.all(docIds.map(fetchGoogleDoc));
-    const validContents = htmlContents.filter(content => content !== null) as string[];
+    const results = await Promise.all(docIds.map(fetchGoogleDoc));
+    const validResults = results.filter((result): result is { content: string; filename: string } => result !== null);
 
-    if (validContents.length === 0) {
+    if (validResults.length === 0) {
       return NextResponse.json({ error: "Failed to fetch any documents" }, { status: 400 });
     }
 
-    const chapters: Chapter[] = validContents.map((content, index) => ({
-      title: `Document ${index + 1}`,
-      content: content,
+    const chapters: Chapter[] = validResults.map((result, index) => ({
+      title: result.filename || `Document ${index + 1}`,
+      content: result.content,
       excludeFromToc: false,
       beforeToc: false
     }));
