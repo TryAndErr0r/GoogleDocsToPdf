@@ -1,12 +1,30 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import DocInput from './components/DocInput';
 
 export default function Home() {
-  const [docLinks, setDocLinks] = useState<string[]>([""]);
+  const [mounted, setMounted] = useState(false);
+  const [docLinks, setDocLinks] = useState<string[]>([""]); // Start with default value
   const [isGenerating, setIsGenerating] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+
+  // Handle localStorage after mount
+  useEffect(() => {
+    const saved = localStorage.getItem('docLinks');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setDocLinks(parsed.length > 0 ? parsed : [""]); 
+    }
+    setMounted(true);
+  }, []);
+
+  // Save to localStorage when docLinks changes
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('docLinks', JSON.stringify(docLinks));
+    }
+  }, [docLinks, mounted]);
 
   const handleGeneratePdf = async () => {
     setIsGenerating(true);
@@ -56,6 +74,31 @@ export default function Home() {
     }
   };
 
+  const handleClear = () => {
+    setDocLinks([""]);
+    setDownloadUrl(null);
+    localStorage.removeItem('docLinks');
+  };
+
+  // Don't render until after mount to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          <Header />
+          <DocInput
+            docLinks={[""]}
+            onChange={() => {}}
+            isGenerating={false}
+            onGenerate={() => {}}
+            onClear={() => {}}
+            downloadUrl={null}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
@@ -65,6 +108,7 @@ export default function Home() {
           onChange={setDocLinks}
           isGenerating={isGenerating}
           onGenerate={handleGeneratePdf}
+          onClear={handleClear}
           downloadUrl={downloadUrl}
         />
       </div>
