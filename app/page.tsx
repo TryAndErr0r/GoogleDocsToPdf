@@ -8,6 +8,7 @@ export default function Home() {
   const [docLinks, setDocLinks] = useState<string[]>([""]); // Start with default value
   const [isGenerating, setIsGenerating] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [downloadFormat, setDownloadFormat] = useState<'pdf' | 'epub' | null>(null);
 
   // Handle localStorage after mount
   useEffect(() => {
@@ -26,9 +27,10 @@ export default function Home() {
     }
   }, [docLinks, mounted]);
 
-  const handleGeneratePdf = async () => {
+  const handleGenerate = async (format: 'pdf' | 'epub') => {
     setIsGenerating(true);
     setDownloadUrl(null);
+    setDownloadFormat(format);
 
     const docIds = docLinks
       .map(link => {
@@ -51,7 +53,7 @@ export default function Home() {
     }
 
     try {
-      const response = await fetch('/api/pdf', {
+      const response = await fetch(`/api/${format}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,8 +69,8 @@ export default function Home() {
       const url = window.URL.createObjectURL(blob);
       setDownloadUrl(url);
     } catch (error) {
-      console.error("Error generating PDF:", error);
-      // Handle error states in UI if needed
+      console.error(`Error generating ${format}:`, error);
+      alert(`Failed to generate ${format.toUpperCase()}. Please try again.`);
     } finally {
       setIsGenerating(false);
     }
@@ -77,6 +79,7 @@ export default function Home() {
   const handleClear = () => {
     setDocLinks([""]);
     setDownloadUrl(null);
+    setDownloadFormat(null);
     localStorage.removeItem('docLinks');
   };
 
@@ -93,6 +96,7 @@ export default function Home() {
             onGenerate={() => {}}
             onClear={() => {}}
             downloadUrl={null}
+            downloadFormat={null}
           />
         </div>
       </div>
@@ -107,9 +111,10 @@ export default function Home() {
           docLinks={docLinks}
           onChange={setDocLinks}
           isGenerating={isGenerating}
-          onGenerate={handleGeneratePdf}
+          onGenerate={handleGenerate}
           onClear={handleClear}
           downloadUrl={downloadUrl}
+          downloadFormat={downloadFormat}
         />
       </div>
     </div>
