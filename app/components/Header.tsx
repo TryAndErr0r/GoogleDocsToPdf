@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function Header() {
     return (
         <div className="w-full flex flex-col items-center gap-4 mb-10 md:mb-16">

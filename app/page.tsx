@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useState } from 'react';
 import Header from './components/Header';
 import DocInput from './components/DocInput';

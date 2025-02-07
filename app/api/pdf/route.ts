@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import fetch from 'node-fetch';
 
 async function downloadPdf(docId: string): Promise<Buffer | null> {
