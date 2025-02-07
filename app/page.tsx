@@ -9,13 +9,18 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [downloadFormat, setDownloadFormat] = useState<'pdf' | 'epub' | null>(null);
+  const [filename, setFilename] = useState<string>("");
 
   // Handle localStorage after mount
   useEffect(() => {
     const saved = localStorage.getItem('docLinks');
+    const savedFilename = localStorage.getItem('filename');
     if (saved) {
       const parsed = JSON.parse(saved);
       setDocLinks(parsed.length > 0 ? parsed : [""]); 
+    }
+    if (savedFilename) {
+      setFilename(savedFilename);
     }
     setMounted(true);
   }, []);
@@ -24,8 +29,9 @@ export default function Home() {
   useEffect(() => {
     if (mounted) {
       localStorage.setItem('docLinks', JSON.stringify(docLinks));
+      localStorage.setItem('filename', filename);
     }
-  }, [docLinks, mounted]);
+  }, [docLinks, filename, mounted]);
 
   const handleGenerate = async (format: 'pdf' | 'epub') => {
     setIsGenerating(true);
@@ -80,7 +86,9 @@ export default function Home() {
     setDocLinks([""]);
     setDownloadUrl(null);
     setDownloadFormat(null);
+    setFilename("");
     localStorage.removeItem('docLinks');
+    localStorage.removeItem('filename');
   };
 
   // Don't render until after mount to prevent hydration mismatch
@@ -97,6 +105,8 @@ export default function Home() {
             onClear={() => {}}
             downloadUrl={null}
             downloadFormat={null}
+            filename={""}
+            onFilenameChange={() => {}}
           />
         </div>
       </div>
@@ -115,6 +125,8 @@ export default function Home() {
           onClear={handleClear}
           downloadUrl={downloadUrl}
           downloadFormat={downloadFormat}
+          filename={filename}
+          onFilenameChange={setFilename}
         />
       </div>
     </div>

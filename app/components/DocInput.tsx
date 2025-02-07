@@ -6,9 +6,11 @@ interface DocInputProps {
     onClear: () => void;
     downloadUrl: string | null;
     downloadFormat: 'pdf' | 'epub' | null;
+    filename: string;
+    onFilenameChange: (filename: string) => void;
   }
   
-  export default function DocInput({ docLinks, onChange, isGenerating, onGenerate, onClear, downloadUrl, downloadFormat }: DocInputProps) {
+  export default function DocInput({ docLinks, onChange, isGenerating, onGenerate, onClear, downloadUrl, downloadFormat, filename, onFilenameChange }: DocInputProps) {
     const handleInputChange = (index: number, value: string) => {
       const updatedDocLinks = [...docLinks];
       updatedDocLinks[index] = value;
@@ -92,7 +94,7 @@ interface DocInputProps {
           {downloadUrl ? (
             <a
               href={downloadUrl}
-              download={`merged-documents.${downloadFormat}`}
+              download={filename ? `${filename}.${downloadFormat}` : `merged-documents.${downloadFormat}`}
               className="w-full sm:w-[calc(50%-0.5rem)] px-6 py-2.5 bg-secondary hover:bg-secondary-darker text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50 transition duration-200 ease-in-out flex items-center justify-center gap-2 text-base"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
@@ -110,6 +112,18 @@ interface DocInputProps {
             </button>
           )}
         </div>
+        
+        {downloadUrl && (
+          <div className="w-full">
+            <input
+              type="text"
+              placeholder="Enter filename (optional)"
+              className="w-full p-3 text-sm border border-gray-300 rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition duration-200 ease-in-out"
+              value={filename}
+              onChange={(e) => onFilenameChange(e.target.value)}
+            />
+          </div>
+        )}
       </div>
     );
   }
