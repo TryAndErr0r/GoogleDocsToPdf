@@ -24,27 +24,17 @@ async function downloadPdf(docId: string): Promise<Buffer | null> {
 async function addChapterPage(pdfDoc: PDFDocument, chapterNumber: number, title: string): Promise<void> {
   const page = pdfDoc.addPage();
   const { width, height } = page.getSize();
-
-  page.drawText(`Chapter ${chapterNumber}`, {
-    x: width / 2 - 50, // Centered X position (approximately)
-    y: height - 100,    // Position from top
-    size: 24,
-    font: await pdfDoc.embedFont('Helvetica-Bold'),
-    color: rgb(0, 0, 0),
-  });
-
-  page.drawLine({
-    start: { x: 50, y: height - 150 },
-    end: { x: width - 50, y: height - 150 },
-    thickness: 2,
-    color: rgb(0, 0, 0),
-  });
-
-  page.drawText(title || 'Document Title', {
-    x: 50,
-    y: height - 200,
-    size: 18,
-    font: await pdfDoc.embedFont('Helvetica'),
+  const font = await pdfDoc.embedFont('Helvetica-Bold');
+  const fontSize = 24;
+  
+  // Calculate text width to center properly
+  const textWidth = font.widthOfTextAtSize(title, fontSize);
+  
+  page.drawText(`${title}`, {
+    x: (width - textWidth) / 2, // Centered using actual text width
+    y: height - 100,            // Position from top
+    size: fontSize,
+    font: font,
     color: rgb(0, 0, 0),
   });
 }

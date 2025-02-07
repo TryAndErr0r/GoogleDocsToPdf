@@ -5,7 +5,7 @@ import Header from './components/Header';
 import DocInput from './components/DocInput';
 
 export default function Home() {
-  const [docLinks, setDocLinks] = useState('');
+  const [docLinks, setDocLinks] = useState<string[]>([""]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
@@ -13,7 +13,7 @@ export default function Home() {
     setIsGenerating(true);
     setDownloadUrl(null);
 
-    const docIds = docLinks.split('\n')
+    const docIds = docLinks
       .map(link => {
         const trimmedLink = link.trim();
         if (trimmedLink === '') return null;
@@ -25,7 +25,7 @@ export default function Home() {
           return trimmedLink;
         }
       })
-      .filter(id => id !== null);
+      .filter(id => id !== null) as string[];
 
     if (docIds.length === 0) {
       setIsGenerating(false);
@@ -62,7 +62,7 @@ export default function Home() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <Header />
         <DocInput
-          value={docLinks}
+          docLinks={docLinks}
           onChange={setDocLinks}
           isGenerating={isGenerating}
           onGenerate={handleGeneratePdf}
